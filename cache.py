@@ -1,6 +1,7 @@
 import json
 import os
-import datetime
+import time
+from datetime import datetime
 
 
 class Cache:
@@ -32,6 +33,7 @@ class Cache:
             for domain, value in data.cache.copy().items():
                 if not Cache.check_ttl(data.cache[domain]):
                     data.cache.pop(domain)
+            time.sleep(10)
         print('Saving cache...')
         Cache.save(data.cache)
 
@@ -39,8 +41,8 @@ class Cache:
     def check_ttl(data: dict) -> bool:
         for qtype, value in data['data'].copy().items():
             for record in value:
-                time = datetime.datetime.fromisoformat(data['time'])
-                if (datetime.datetime.now() - time).seconds > record['ttl']:
+                time = datetime.fromisoformat(data['time'])
+                if (datetime.now() - time).seconds > record['ttl']:
                     value.remove(record)
             if not value:
                 data['data'].pop(qtype)
